@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Form from './R045_ReactstrapInputGroup.js';
+import Test from './R074_ReactCurrying';
 import 'bootstrap/dist/css/bootstrap.css'
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
     <div>
       <h1>Start React 200!</h1>
       <p>CSS 적용하기</p>
-      <Form/>
+      <Test/>
     </div>
   );
 }
