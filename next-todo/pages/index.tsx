@@ -1,26 +1,29 @@
-import { NextPage } from "next";
-import styled from "styled-components";
+import { GetServerSideProps, NextPage } from "next";
+import TodoList from "../components/TodoList";
+import {TodoType} from "../types/todo";
+import {getTodosAPI} from "../lib/api/todo";
 
-const Container = styled.div`
-    padding : 20px;
-`;
-
-const index: NextPage = () => {
-    return <Container>
-            <h1>hello Styled-components</h1>
-            <h2>hello Styled-components</h2>
-            <p>hello Styled-components</p>
-            <ul>
-                <li>hello styled-components</li>
-            </ul>
-            <a>hello Styled-components</a>
-            <span>hello Styled-components</span>
-
-
-        
-        </Container>;
-    
+interface IProps{
+    todos: TodoType[];
 }
 
-export default index;
+const app: NextPage<IProps> = ({todos}) => {
+    console.log(process.env.NEXT_PUBLIC_API_URL);
+
+    return <TodoList todos={todos} />
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    try {
+        console.log(process.env.NEXT_PUBLIC_API_URL);
+        const {data} = await getTodosAPI();
+        console.log(data);
+        return {props: { todos: data}};
+    } catch(e){
+        console.log(e);
+        return {props: { todos: []}};
+    }
+}
+
+export default app;
 
