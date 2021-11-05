@@ -17,6 +17,7 @@ import { userActions } from "../../store/user";
 import { commonActions } from "../../store/common";
 import useValidateMode from "../../hooks/useValidateMode";
 import PasswordWarning from "./PasswordWarning";
+import { authActions } from "../../store/auth";
 
 const Container = styled.form`
   width: 568px;
@@ -99,6 +100,10 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
     const [passwordFocused, setPasswordFocused] = useState(false);
     const dispatch = useDispatch();
     const {setValidateMode} = useValidateMode();
+
+    const changeToLoginModal = () => {
+      dispatch(authActions.setAuthMode("login"));
+    }
 
     //* 이메일 주소 변경 시
     const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
