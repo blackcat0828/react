@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import palette from "../../styles/palette";
 import styled from "styled-components";
 import CloseXIcon from "../../public/static/svg/modal/modal_colose_x_icon.svg";
@@ -101,9 +101,14 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
     const dispatch = useDispatch();
     const {setValidateMode} = useValidateMode();
 
-    const changeToLoginModal = () => {
-      dispatch(authActions.setAuthMode("login"));
-    }
+    //* 선택할 수 없는 월 option
+    const disabledMoths = ["월"];
+
+    //* 선택할 수 없는 일 option
+    const disabledDays = ["일"];
+    
+    //* 선택할 수 없는 월 option
+    const disabledYears = ["년"];
 
     //* 이메일 주소 변경 시
     const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -242,6 +247,11 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
       return true;
     }
 
+    //* 로그인 모달로 변경하기
+    const changeToLoginModal = useCallback(() => {
+      dispatch(authActions.setAuthMode("login"));
+    }, []);
+
 
     //* 언마운트시 발리데이트모드 끄기
     useEffect(() => {
@@ -316,7 +326,7 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
               <div className="sign-up-modal-birthday-month-selector">
                 <Selector
                   options={monthList}
-                  disabledOptions={["월"]}
+                  disabledOptions={disabledMoths}
                   defaultValue="월"
                   value={birthMonth}
                   onChange={onChangeBirthMonth}
@@ -326,7 +336,7 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
               <div className="sign-up-modal-birthday-day-selector">
                 <Selector
                   options={dayList}
-                  disabledOptions={["일"]}
+                  disabledOptions={disabledDays}
                   defaultValue="일"
                   value={birthDay}
                   onChange={onChangeBirthDay}
@@ -336,7 +346,7 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
               <div className="sign-up-modal-birthday-year-selector">
                 <Selector
                   options={yearList}
-                  disabledOptions={["년"]}
+                  disabledOptions={disabledYears}
                   defaultValue="년"
                   value={birthYear}
                   onChange={onChangeBirthYear}
@@ -352,7 +362,7 @@ const SignUpModal: React.FC<IProps> = ({closeModal}) => {
               <span
                 className="sign-up-modal-set-login"
                 role="presentation"
-                onClick={() => {}}
+                onClick={changeToLoginModal}
               >
                 로그인
               </span>

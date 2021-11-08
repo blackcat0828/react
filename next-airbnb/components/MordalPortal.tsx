@@ -29,13 +29,13 @@ const ModalPortal: React.FC<IProps> = ({children, closePortal}) => {
     const ref = useRef<Element | null>();
     const [mounted, setMounted] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         setMounted(true);
-        if (document){
-            const dom = document.querySelector("#root-modal");
-            ref.current = dom;
+        if (document) {
+          const dom = document.querySelector("#root-modal");
+          ref.current = dom;
         }
-    }, []);
+      }, []);
 
     if(ref.current && mounted){
         return createPortal(
@@ -46,6 +46,7 @@ const ModalPortal: React.FC<IProps> = ({children, closePortal}) => {
             ref.current
         )
     }
+    return null;
 }
 
 export default ModalPortal;

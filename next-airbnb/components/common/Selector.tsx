@@ -110,26 +110,47 @@ interface IProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     disabledOptions?: string[];
     value?: string;
     isValid?: boolean;
+    label?: string;
+    useValidation?: boolean;
+    errorMessage?: string;
+    type?: "register" | "normal";
 }
 
-const Selector: React.FC<IProps> = ({options = [], disabledOptions = [], isValid, ...props}) => {
+const Selector: React.FC<IProps> = ({
+    label,
+    options = [], 
+    disabledOptions = [], 
+    isValid, 
+    useValidation = true,
+    errorMessage = "옵션을 선택하세요.",
+    type = "normal",
+    ...props}) => {
     const validateMode = useSelector((state) => state.common.validateMode);
     return (
-        <Container isValid={!!isValid} validateMode={validateMode} type="register">
-            <select {...props}>
-                {disabledOptions.map((option, index) => (
-                    <option key={index} value={option} disabled>
-                        {option}
-                    </option>
-                ))}
-                {options.map((option, index) => (
-                    <option key={index} value={option}>
-                        {option}
-                    </option>
-                ))}
-            </select>
+        <Container isValid={!!isValid} validateMode={validateMode} type={type}>
+            <label>
+              {label && <span>{label}</span>}
+              <select {...props}>
+                  {disabledOptions.map((option, index) => (
+                      <option key={index} value={option} disabled>
+                          {option}
+                      </option>
+                  ))}
+                  {options.map((option, index) => (
+                      <option key={index} value={option}>
+                          {option}
+                      </option>
+                  ))}
+              </select>
+            </label>
+            {useValidation && validateMode && !isValid && (
+              <div className="selector-warning">
+                <WarningIcon />
+                <p>{errorMessage}</p>
+              </div>
+            )}
         </Container>
     )
 }
 
-export default Selector;
+export default React.memo(Selector);
