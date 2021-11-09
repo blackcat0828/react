@@ -122,27 +122,30 @@ const RadioGroup: React.FC<Iprops> = ({
     const validateMode = useSelector((state) => state.common.validateMode);
 
     return (
-        <Container isValid={!!isValid} validateMode={validateMode}>
-            <p className="radio-label">{label}</p>
-            <div className="radio=list-wrapper">
-                {options.map((option, index) => (
-                    <label key={index}>
-                        <input 
-                            type="radio" 
-                            checked={value === option.value}
-                            onChange={() => onChange && onChange(option.value)}
-                        />
-                        <span>
-                            {option.label}
-                            <span className="radio-description">
-                                {option.description}
-                            </span>
-                        </span>
-                    </label>
-                ))}
-            </div>
-
-        </Container>
+      <Container isValid={!!isValid} validateMode={validateMode}>
+        <p className="radio-label">{label}</p>
+        <div className="radio-list-wrapper">
+          {options.map((option, index) => (
+            <label key={index}>
+              <input
+                type="radio"
+                checked={value === option.value}
+                onChange={() => onChange && onChange(option.value)}
+              />
+              <span>
+                {option.label}
+                <span className="radio-description">{option.description}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        {validateMode && !isValid && (
+          <div className="radio-group-warning">
+            <WarningIcon />
+            <p>{errorMessage}</p>
+          </div>
+        )}
+      </Container>
     )
 }
 

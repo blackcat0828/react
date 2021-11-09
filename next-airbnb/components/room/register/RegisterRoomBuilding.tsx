@@ -7,6 +7,7 @@ import { useSelector } from "../../../store";
 import { registerRoomActions } from "../../../store/registerRoom";
 import { useDispatch } from "react-redux";
 import RadioGroup from "../../common/RadioGroup";
+import RegisterRoomFooter from "./RegisterRoomFooter";
 
 
 const Container = styled.div`
@@ -43,6 +44,7 @@ const RegisterRoomBuilding: React.FC = () => {
     const buildingType = useSelector((state) => state.registerRoom.buildingType);
     const roomType = useSelector((state) => state.registerRoom.roomType);
     const largeBuildingType = useSelector((state) => state.registerRoom.largeBuildingType);
+    const isSetUpForGuest = useSelector((state) => state.registerRoom.isSetUpForGuest);
 
     const dispatch = useDispatch();
 
@@ -54,15 +56,34 @@ const RegisterRoomBuilding: React.FC = () => {
         dispatch(registerRoomActions.setLargeBuildingType(event.target.value));
     }
 
+    //* 상세 건물유형 변경시
+    const onChangeBuildingType = (
+        event: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+        dispatch(registerRoomActions.setBuildingType(event.target.value));
+    };
+
     //* 숙소 유형 변경시
-    const onChangeRoomType = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selected = event.target.value;
-        dispatch(
-            registerRoomActions.setRoomType(
-                selected as "entire" | "private" | "public"
-            )
-        )
+    const onChangeRoomType = (value: any) => {
+        dispatch(registerRoomActions.setRoomType(value));
+    };
+
+    //* 게스트용 숙소인지 변경 시
+    const onChangeIsSetUpForGuest = (value: any) => {
+        dispatch(registerRoomActions.setIsSetUpForGuest(value));
     }
+
+    //* 게스트만 사용하도록 만들어진 숙소인지 라디오 options
+    const isSetUpForGuestOptions = [
+        {
+            label: "예, 게스트용으로 따로 마련된 숙소입니다.",
+            value: true,
+        },
+        {
+            label: "아니요, 제 개인 물건이 숙소에 있습니다.",
+            value: false,
+        }
+    ]
 
     //* 선택된 건물 유형 options
     const detailBuildingOptions = useMemo(() => {
@@ -137,6 +158,14 @@ const RegisterRoomBuilding: React.FC = () => {
             description: "게스트는 개인 공간 없이, 다른 사람과 함께 쓰는 침실이나 공용공간에서 숙박합니다.",
         }
     ];
+
+
+    //* 모든 값이 있는지 확인하기
+    const isValid = useMemo(()=> {
+        if(!largeBuildingType || !buildingType || !roomType || isSetUpForGuest === null){
+            return false;
+        }
+    }, [largeBuildingType, buildingType, roomType, isSetUpForGuest]);
     
     return (
         <Container>
@@ -151,26 +180,48 @@ const RegisterRoomBuilding: React.FC = () => {
                     label="우선 범위를 좁혀볼까요?"
                     options={largeBuildingTypeList}
                     onChange={onChangeLargeBuildingType}
+                    isValid={!!largeBuildingType}
                 />
             </div>
             <div className="register-room-building-selector-wrapper">
                 <Selector 
                     type="register"
-                    value={undefined}
-                    disabled={!largeBuildingType}
+                    value={buildingType || undefined}
                     label="건물 유형을 선택하세요."
                     options={detailBuildingOptions}
+                    onChange={onChangeBuildingType}
+                    disabled={!largeBuildingType}
+                    isValid={!!buildingType}
                 />
             </div>
             {buildingType && (
-                <div className="register-room-room-type-radio">
-                    <RadioGroup 
-                        label="게스트가 묵게 될 숙소 유형을 골라주세요." 
-                        value={undefined}
-                        options={roomTypeRadioOptions}
-                    />
-                </div>
+                <> 
+                    <div className="register-room-room-type-radio">
+                        <RadioGroup 
+                            label="게스트가 묵게 될 숙소 유형을 골라주세요." 
+                            value={roomType || undefined}
+                            options={roomTypeRadioOptions}
+                            onChange={onChangeRoomType}
+                            isValid={!!roomType}
+                        />
+                    </div>
+                    <div className="register-room-is-setup-for-guest-radio">
+                        <RadioGroup 
+                            label="게스트만 사용하도록 만들어진 숙소인가요?"
+                            value={isSetUpForGuest}
+                            onChange={onChangeIsSetUpForGuest}
+                            options={isSetUpForGuestOptions}
+                            isValid={isSetUpForGuest !== null}
+                        />
+                    </div>
+                </>
             )}
+
+            <RegisterRoomFooter 
+                isValid={isValid}
+                prevHref="/"
+                nextHref="/room/register/bedrooms"            
+            />
         </Container>
     )
 }
